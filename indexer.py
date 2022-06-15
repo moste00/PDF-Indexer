@@ -134,7 +134,7 @@ else:
             index_file.write("\n")
             
     for group_name in groups_sub_indices:
-        with open(group_name,"w") as group_file:
+        with open(group_name+".txt","w") as group_file:
             for word in groups_sub_indices[group_name]:
                 group_file.write(word)
                 group_file.write(":\n")
