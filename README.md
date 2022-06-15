@@ -27,6 +27,16 @@ Invoke the script as follows
 
 You can also remove the string double qoutations if the file name has no spaces in it.
 
+## Page Groups
+
+If the PDF file is too large for the resulting index to be useful, you can split it into several sub-indices using page groups. A page group is any set of pages you are interested in. For example, suppose you are indexing a large collection of lectures and you're only interested in lecture 1, the first 10 pages. 
+
+You can invoke the script like this
+
+    python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" TXT="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.txt" Lecture1=1..10
+    
+This invocation will, creating the overall index specified by TXT, also create a sub-index of only the the first 10 pages, in a file named Lecture1.txt. And thus you have only the words of Lecture 1 indexed. 
+
 ## Efficiency
 
 The script is somewhat a sloth. It takes about a minute to index a pdf file of about 500 pages on an intel core i7 4th gen dual 2.9 GHz core machine with 8GB RAM and an HDD, running a Windows 8.1 instance. 
