@@ -35,7 +35,7 @@ You can invoke the script like this
 
     python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" TXT="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.txt" Lecture1=1..10
     
-This invocation will, creating the overall index specified by TXT, also create a sub-index of only the the first 10 pages, in a file named Lecture1.txt. And thus you have only the words of Lecture 1 indexed. 
+This invocation will, in addition to creating the overall index specified by TXT, also create a sub-index of only the the first 10 pages, in a file named Lecture1.txt. And thus you have only the words of Lecture 1 indexed. 
 
 ## Efficiency
 
