@@ -4,8 +4,11 @@ A python script to scrape a pdf file and create a word index out of it.
 A [word index](https://en.wikipedia.org/wiki/Index_(publishing)#Purpose) is a sorted list of important words in a document, where each word is tagged by the all the page numbers it appears in. For example, in a book about cats, an index might look like this 
 
 Cute 1,2,5,7
+
 Eyes 3,4,5
+
 Paws 2,3,4
+
 Whiskers 5,6,7
 
 The numbers that follow each word is all the page numbers where the word appeared. This helps you find a word quickly.
@@ -13,7 +16,9 @@ The numbers that follow each word is all the page numbers where the word appeare
 ## How To Use
 
 Use any python installation with the library [pdfplumber](https://github.com/jsvine/pdfplumber) installed. You can do it with 
+
     pip install pdfplumber
+    
 as usual.
 
 Invoke the script as follows
