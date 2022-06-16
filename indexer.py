@@ -71,10 +71,15 @@ class CmdArgsParser:
         
             
 def get_relevant_words(string):
-    all_words = re.findall(r"[a-zA-Z]{2,}",string)
+    all_words = re.findall(r"[a-zA-Z]{3,}",string)
     
-    return {word.lower() for word in all_words 
-                         if not word.lower() in IRRELEVANT_WORDS}
+    relevant_words = set({})
+    for word in all_words:
+        word_lowercase = word.lower() 
+        if not word_lowercase in IRRELEVANT_WORDS:
+            relevant_words.add(word_lowercase)
+        
+    return relevant_words
 
 ###################################################################################################################
 ###################################################################################################################
@@ -88,7 +93,7 @@ def get_relevant_words(string):
 args = CmdArgsParser(' '.join(sys.argv))
 if args.parsing_errors:
     for error in args.parsing_errors:
-        print("Parse Error! \n"+error)
+        print("################################# Parse Error! ################################# \n"+error)
 else:
     #This is a Dictionary<String, Set<Integer>> that will map each relevant word to the set of pages where it appears         
     index = {}
