@@ -11,6 +11,11 @@ import sys
 
 from ignored_words import IRRELEVANT_WORDS 
 
+from config import DEFAULT_EXTENSION
+from config import before_writing_begins
+from config import before_writing_word,after_writing_word,before_writing_pagenum,after_writing_pagenum
+from config import after_writing_ends
+
 #A Page Group is a name given to a bunch of pages
 #It's an interface with a single method 
 #contains(page_number : Int) : Bool 
@@ -49,10 +54,10 @@ class CmdArgsParser:
                                        +"Please Make Sure You Include The Extension Like This : foobarbaz.pdf")
         #Try parsing the index text file path
         try:
-            self.index_file_path = re.search("TXT=.+\.txt",cmd_string).group()[4:]
+            self.index_file_path = re.search("IDX=.+\.[a-zA-Z0-9]{3}",cmd_string).group()[4:]
         except AttributeError:
-            self.parsing_errors.append( "No text File Path Recognized\n"
-                                       +"Please Make Sure You Include The Extension Like This : foobarbaz.txt")
+            self.parsing_errors.append( "No Index File Path Recognized\n"
+                                       +"Please Make Sure You Include The Extension Like This : foobarbaz.ext")
         
         self.groups = []
         #Try parsing ranged page groups
@@ -62,11 +67,16 @@ class CmdArgsParser:
                 group_fields = group.split("=")
                 group_name = group_fields[0]
                 group_range = group_fields[1].split("..")
-                    
+                
+                #Sort group start and group end 
                 min_num,max_num = int(group_range[0]),int(group_range[1])
                 if min_num > max_num:
                     min_num,max_num = max_num,min_num
-                        
+                
+                #Insert default extension if group name has no extension
+                if group_name.rfind(".") == -1:
+                    group_name = group_name + DEFAULT_EXTENSION
+                    
                 self.groups.append(RangePageGroup(group_name, min_num, max_num))
         
             
@@ -119,13 +129,22 @@ else:
     groups_sub_indices = {}    
     
     with open(args.index_file_path,"w") as index_file:
-        for word in sorted(index):
+        
+        index_file.write(before_writing_begins(len(index)))
+        
+        for i,word in enumerate(sorted(index)):
+            index_file.write(before_writing_word(i))         
             index_file.write(word)
-            index_file.write(":\n")
+            index_file.write(after_writing_word(i+1))
             
-            for page_num in index[word]:
-                index_file.write(str(page_num)+",")
-                
+            total_num_pages = len(index[word])
+            for j,page_num in enumerate(index[word]):
+                index_file.write(before_writing_pagenum(j, total_num_pages))
+                index_file.write(str(page_num))
+                index_file.write(after_writing_pagenum(j+1, total_num_pages))
+
+                #While we're iterating over the master index
+                #Build the sub indices of each group
                 for group in args.groups:
                     if group.contains(page_num):
                         if group.name in groups_sub_indices:
@@ -135,16 +154,22 @@ else:
                                                              word: 
                                                                  {i for i in index[word] if group.contains(i)}
                                                              }
-                        
-            index_file.write("\n")
+        index_file.write(after_writing_ends())                
+            
             
     for group_name in groups_sub_indices:
-        with open(group_name+".txt","w") as group_file:
-            for word in groups_sub_indices[group_name]:
+        with open(group_name,"w") as group_file:
+            group_file.write(before_writing_begins(len(groups_sub_indices[group_name])))
+            
+            for i,word in enumerate(groups_sub_indices[group_name]):
+                group_file.write(before_writing_word(i))  
                 group_file.write(word)
-                group_file.write(":\n")
+                group_file.write(after_writing_word(i+1))
                 
-                for page_num in groups_sub_indices[group_name][word]:
-                    group_file.write(str(page_num)+",")
+                total_num_pages = len(groups_sub_indices[group_name][word])
+                for j,page_num in enumerate(groups_sub_indices[group_name][word]):
+                    group_file.write(before_writing_pagenum(j, total_num_pages))
+                    group_file.write(str(page_num))
+                    group_file.write(after_writing_pagenum(j+1, total_num_pages))
                     
-                group_file.write("\n")
+            group_file.write(after_writing_ends())
