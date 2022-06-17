@@ -11,7 +11,7 @@ Paws: 2,3,4
 
 Whiskers: 5,6,7
 
-The numbers that follow each word is all the page numbers where the word appeared. This helps you find a word quickly.
+The numbers that follow each word are all the page numbers where the word appeared. This helps you find a word quickly.
 
 ## How To Use
 
