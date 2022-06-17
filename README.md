@@ -33,18 +33,18 @@ If the PDF file is too large for the resulting index to be useful, you can split
 
 You can invoke the script like this
 
-    python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" IDX="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.txt" #Lecture1=1..10
+    python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" IDX="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.txt" "#Lecture1=1..10"
     
-This invocation will, in addition to creating the overall index specified by IDX, also create a sub-index of only the the first 10 pages, in a file named Lecture1.txt. And thus you have only the words of Lecture 1 indexed.
+This invocation will, in addition to creating the overall index specified by IDX, also create a sub-index of only the the first 10 pages, in a file named Lecture1.txt. And thus you have only the words of Lecture 1 indexed. You can add any number of page groups this way.
 
-The page group name minus the leading '#' is the path to its output file. If no extension is found the DEFAULT_EXTENSION from config.py will be used.
+The page group name minus the leading '#' and the trailing '=' is the path to its output file. If no extension is specified the DEFAULT_EXTENSION from config.py will be used. Notice the string quotations around the whole page group.
 
 ## Customizing The Output Format
 The way format customization works is that the script calls callback functions in config.py before or after key events in the printing process, and the return objects are printed to the output file.
 
 For example, suppose we want to print in the json format. First we need to invoke the script like this
 
-    python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" IDX="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.txt" #Lecture1.json=1..10
+    python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" IDX="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.txt" "#Lecture1.json=1..10"
 
 But that is not enough, the file config.py must also contain the following function defintions 
 
@@ -63,7 +63,7 @@ But that is not enough, the file config.py must also contain the following funct
     def after_writing_ends():
         return "}"
         
-The first function is called at the very beginning during printing, before anything has been printed. It returns the starting curly brace in the json file. 
+The first function is called at the very beginning during printing, before anything is printed yet. It returns the starting curly brace in the json file. 
     
 The second function is called everytime any word is printed, before printing. It checks if this is the first word, and if so, only returns a string quotation, and otherwise returns a seperating comma before the string quotation. 
     
@@ -71,7 +71,7 @@ The third function terminates the json string containing the word and starts the
     
 The fourth function is a no-op because we don't need to do anything beofer writing a page number. 
     
-The fifth function, called after every page number is printed, normally prints the seperating comma in the json array containing the page numbers but when the         array is finished it terminates it and starts a new line. 
+The fifth function, called after every page number is printed, normally prints the seperating comma in the json array containing the page numbers but when the         array is finished it terminates the array and starts a new line. 
     
 The final function is called after the printing process is done and terminates the root json object. 
     
