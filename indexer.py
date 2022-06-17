@@ -54,30 +54,30 @@ class CmdArgsParser:
                                        +"Please Make Sure You Include The Extension Like This : foobarbaz.pdf")
         #Try parsing the index text file path
         try:
-            self.index_file_path = re.search("IDX=.+\.[a-zA-Z0-9]{3}",cmd_string).group()[4:]
+            self.index_file_path = re.search("IDX=[^.]+\.[a-zA-Z0-9]{3}",cmd_string).group()[4:]
         except AttributeError:
             self.parsing_errors.append( "No Index File Path Recognized\n"
                                        +"Please Make Sure You Include The Extension Like This : foobarbaz.ext")
         
         self.groups = []
         #Try parsing ranged page groups
-        ranged_groups = re.findall("[a-zA-Z0-9]+=[0-9]+\.\.[0-9]+",cmd_string)
-        if ranged_groups:
-            for group in ranged_groups:
-                group_fields = group.split("=")
-                group_name = group_fields[0]
-                group_range = group_fields[1].split("..")
+        ranged_groups = re.finditer("#[^.]+(\.[^=]+)?=[0-9]+\.\.[0-9]+",cmd_string)
+        for match in ranged_groups:
+            group = match.group()
+            group_fields = group.split("=")
+            group_name = group_fields[0][1:]
+            group_range = group_fields[1].split("..")
                 
-                #Sort group start and group end 
-                min_num,max_num = int(group_range[0]),int(group_range[1])
-                if min_num > max_num:
-                    min_num,max_num = max_num,min_num
+            #Sort group start and group end 
+            min_num,max_num = int(group_range[0]),int(group_range[1])
+            if min_num > max_num:
+                min_num,max_num = max_num,min_num
                 
-                #Insert default extension if group name has no extension
-                if group_name.rfind(".") == -1:
-                    group_name = group_name + DEFAULT_EXTENSION
+            #Insert default extension if group name has no extension
+            if group_name.rfind(".") == -1:
+                group_name = group_name + DEFAULT_EXTENSION
                     
-                self.groups.append(RangePageGroup(group_name, min_num, max_num))
+            self.groups.append(RangePageGroup(group_name, min_num, max_num))
         
             
 def get_relevant_words(string):
