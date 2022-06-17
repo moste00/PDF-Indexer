@@ -61,7 +61,7 @@ class CmdArgsParser:
         
         self.groups = []
         #Try parsing ranged page groups
-        ranged_groups = re.finditer("#[^.]+(\.[^=]+)?=[0-9]+\.\.[0-9]+",cmd_string)
+        ranged_groups = re.finditer("#[^.]+(\.[a-zA-Z0-9]+)?=[0-9]+\.\.[0-9]+",cmd_string)
         for match in ranged_groups:
             group = match.group()
             group_fields = group.split("=")
