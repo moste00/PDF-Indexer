@@ -63,26 +63,33 @@ But that is not enough, the file config.py must also contain the following funct
     def after_writing_ends():
         return "}"
         
-    The first function is called at the very beginning during printing, before anything has been printed. It returns the starting curly brace in the json file. 
+The first function is called at the very beginning during printing, before anything has been printed. It returns the starting curly brace in the json file. 
     
-    The second function is called everytime any word is printed, before printing. It checks if this is the first word, and if so, only returns a string quotation, and otherwise returns a seperating comma before the string quotation. 
+The second function is called everytime any word is printed, before printing. It checks if this is the first word, and if so, only returns a string quotation, and otherwise returns a seperating comma before the string quotation. 
     
-    The third function terminates the json string containing the word and starts the json array where the page numbers will be written. 
+The third function terminates the json string containing the word and starts the json array where the page numbers will be written. 
     
-    The fourth function is a no-op because we don't need to do anything beofer writing a page number. 
+The fourth function is a no-op because we don't need to do anything beofer writing a page number. 
     
-    The fifth function, called after every page number is printed, normally prints the seperating comma in the json array containing the page numbers but when the         array is finished it terminates it and starts a new line. 
+The fifth function, called after every page number is printed, normally prints the seperating comma in the json array containing the page numbers but when the         array is finished it terminates it and starts a new line. 
     
-    The final function is called after the printing process is done and terminates the root json object. 
+The final function is called after the printing process is done and terminates the root json object. 
     
-    This is what the output files might look like  
+This is what the output files might look like  
     {
         "word1":[1]
         ,"word2":[2,3]
         ,"word3":[3,4]
     }
     
-    Therefore, those 6 callback functions in config.py allow the user to customize the output format in an extremely general way. 
+Therefore, those 6 callback functions in config.py allow the user to customize the output format in an extremely general way.
+
+Note that :
+
+1- The IDX master index file must have a 3 letter extension (due to parsing issues), so it will always be a text file (or a csv file or any other 3 letter extension) but it will be printed in the json format (or any format specified by the functions in config.py).
+
+2- Default printing format in config.py is not the json format. This is just an example.
+
 ## Efficiency
 
 The script is somewhat a sloth. It takes about a minute to index a pdf file of about 500 pages on an intel core i7 4th gen dual 2.9 GHz core machine with 8GB RAM and an HDD, running a Windows 8.1 instance. 
