@@ -8,6 +8,9 @@ Created on Wed Jun 15 14:35:41 2022
 import pdfplumber
 import re
 import sys
+from tqdm import tqdm
+
+
 
 from ignored_words import IRRELEVANT_WORDS 
 
@@ -47,7 +50,8 @@ else:
     index = {}
     
     with pdfplumber.open(args.pdf_file_path) as pdf_file:
-        for idx,page in enumerate(pdf_file.pages):
+        print("Pages Progress:")
+        for idx,page in tqdm(enumerate(pdf_file.pages)):
             text = page.extract_text()
             words = get_relevant_words(text)
             
@@ -69,9 +73,9 @@ else:
     with open(args.index_file_path,"w") as index_file:
         
         index_file.write(before_writing_begins(len(index)))
-        
         num_words_skipped = 0
-        for i,word in enumerate(sorted(index)):
+        print("Words Progress:")
+        for i,word in tqdm(enumerate(sorted(index))):
             total_num_pages = len(index[word])
             if not include_word_in_index(word, total_num_pages, index[word]):
                 num_words_skipped += 1
@@ -99,8 +103,8 @@ else:
                                                              }
         index_file.write(after_writing_ends())                
             
-            
-    for group_name in groups_sub_indices:
+    print("groups Progress:")
+    for group_name in tqdm(groups_sub_indices):
         with open(group_name,"w") as group_file:
             group_file.write(before_writing_begins(len(groups_sub_indices[group_name])))
             
