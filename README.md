@@ -25,26 +25,30 @@ Invoke the script as follows
 
     python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" IDX="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.txt"
 
-You can also remove the string double quotations if the file paths have no spaces in it. The IDX file can have any 3 letter extension.
-
 ## Page Groups
 
 If the PDF file is too large for the resulting index to be useful, you can split it into several sub-indices using page groups. A page group is any set of pages you are interested in. For example, suppose you are indexing a large file representing a collection of lectures and you're only interested in lecture 1, the first 10 pages. 
 
 You can invoke the script like this
 
-    python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" IDX="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.txt" "#Lecture1=1..10"
+    python indexer.py [...] "#Lecture1=1..10"
     
 This invocation will, in addition to creating the overall index specified by IDX, also create a sub-index of only the the first 10 pages, in a file named Lecture1.txt. And thus you have only the words of Lecture 1 indexed. You can add any number of page groups this way.
 
 The page group name minus the leading '#' and the trailing '=' is the path to its output file. If no extension is specified the DEFAULT_EXTENSION from config.py will be used. Notice the string quotations around the whole page group.
 
+## Set Page Groups
+
+Page groups specified with 'number..number' are called "Ranged Page Group", because the 2 numbers form a range. You might want to specify a group of pages that are not contigues, in which case you can use a "Set Page Group", like this 
+
+    python indexer.py [...] "@Important Pages=1,5,10,80,90,22,42"
+    
 ## Customizing The Output Format
 The way format customization works is that the script calls callback functions in config.py before or after key events in the printing process, and the return objects are printed to the output file.
 
 For example, suppose we want to print in the json format. First we need to invoke the script like this
 
-    python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" IDX="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.txt" "#Lecture1.json=1..10"
+    python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" IDX="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.json" "#Lecture1.json=1..10"
 
 But that is not enough, the file config.py must also contain the following function defintions 
 
@@ -83,12 +87,6 @@ This is what the output files might look like
     }
     
 Therefore, those 6 callback functions in config.py allow the user to customize the output format in an extremely general way.
-
-Note that :
-
-1- The IDX master index file must have a 3 letter extension (due to parsing issues), so it will always be a text file (or a csv file or any other 3 letter extension) but it will be printed in the json format (or any format specified by the functions in config.py).
-
-2- Default printing format in config.py is not the json format. This is just an example.
 
 ## Efficiency
 
