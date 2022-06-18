@@ -20,10 +20,10 @@ def before_writing_begins(total_num_words):
 
 #Called immediately before writing a word to the index file
 def before_writing_word(num_words_written_so_far):
-    return ""
+    return "|"
 #Called immediately after writing a word to the index file
 def after_writing_word(num_words_written_so_far):
-    return ":"
+    return "|"
 
 #Called immediately before writing a page number
 def before_writing_pagenum(page_numbers_written_so_far, total_page_numbers):
@@ -36,3 +36,10 @@ def after_writing_pagenum(page_numbers_written_so_far, total_page_numbers):
 #Called once when the writing to the file ends
 def after_writing_ends():
     return ""
+
+
+#This is a user defined filter where you can put custom code to prevent words from appearing in the index
+#Any word that doesn't pass this filter (returns false) won't appear in the index nor any of the sub-indices
+def include_word_in_index(word,num_pages,pages):
+    if num_pages == 1: return False 
+    return True

@@ -15,70 +15,8 @@ from config import DEFAULT_EXTENSION
 from config import before_writing_begins
 from config import before_writing_word,after_writing_word,before_writing_pagenum,after_writing_pagenum
 from config import after_writing_ends
-
-#A Page Group is a name given to a bunch of pages
-#It's an interface with a single method 
-#contains(page_number : Int) : Bool 
-#That returns whether the page number belongs to the page
-class PageGroup:
-    def __init__(self,name):
-        self.name = name
-    
-class RangePageGroup(PageGroup):
-    def __init__(self,name,start_page_number,end_page_number):
-        self.start = start_page_number
-        self.end = end_page_number
-        PageGroup.__init__(self, name)
-    
-    def contains(self,page_number):
-        return page_number >= self.start and page_number <= self.end
-
-class SetPageGroup(PageGroup):
-    def __init__(self,name,page_numbers):
-        self.page_numbers = page_numbers
-        PageGroup.__init__(self, name)
-    
-    def contains(self,page_number):
-        return page_number in self.page_numbers
-        
-class CmdArgsParser:
-    
-    def __init__(self,cmd_string):
-        self.parsing_errors = []
-        
-        #Try parsing the pdf path 
-        try:
-            self.pdf_file_path = re.search("PDF=.+\.pdf",cmd_string).group()[4:]
-        except AttributeError:
-            self.parsing_errors.append( "No PDF File Path Recognized\n"
-                                       +"Please Make Sure You Include The Extension Like This : foobarbaz.pdf")
-        #Try parsing the index text file path
-        try:
-            self.index_file_path = re.search("IDX=[^.]+\.[a-zA-Z0-9]{3}",cmd_string).group()[4:]
-        except AttributeError:
-            self.parsing_errors.append( "No Index File Path Recognized\n"
-                                       +"Please Make Sure You Include The Extension Like This : foobarbaz.ext")
-        
-        self.groups = []
-        #Try parsing ranged page groups
-        ranged_groups = re.finditer("#[^.]+(\.[a-zA-Z0-9]+)?=[0-9]+\.\.[0-9]+",cmd_string)
-        for match in ranged_groups:
-            group = match.group()
-            group_fields = group.split("=")
-            group_name = group_fields[0][1:]
-            group_range = group_fields[1].split("..")
-                
-            #Sort group start and group end 
-            min_num,max_num = int(group_range[0]),int(group_range[1])
-            if min_num > max_num:
-                min_num,max_num = max_num,min_num
-                
-            #Insert default extension if group name has no extension
-            if group_name.rfind(".") == -1:
-                group_name = group_name + DEFAULT_EXTENSION
-                    
-            self.groups.append(RangePageGroup(group_name, min_num, max_num))
-        
+from config import include_word_in_index
+from cmd_args_parser import CmdArgsParser
             
 def get_relevant_words(string):
     all_words = re.findall(r"[a-zA-Z]{3,}",string)
@@ -132,12 +70,17 @@ else:
         
         index_file.write(before_writing_begins(len(index)))
         
+        num_words_skipped = 0
         for i,word in enumerate(sorted(index)):
-            index_file.write(before_writing_word(i))         
-            index_file.write(word)
-            index_file.write(after_writing_word(i+1))
-            
             total_num_pages = len(index[word])
+            if not include_word_in_index(word, total_num_pages, index[word]):
+                num_words_skipped += 1
+                continue 
+            
+            index_file.write(before_writing_word(i - num_words_skipped))         
+            index_file.write(word)
+            index_file.write(after_writing_word(i+1 - num_words_skipped))
+            
             for j,page_num in enumerate(index[word]):
                 index_file.write(before_writing_pagenum(j, total_num_pages))
                 index_file.write(str(page_num))
