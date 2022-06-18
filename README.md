@@ -14,6 +14,7 @@ Whiskers: 5,6,7
 The numbers that follow each word are all the page numbers where the word appeared. This helps you find a word quickly.
 
 ## How To Use
+<details> <summary>Click to expand...</summary>
 
 Install Dependencies
 
@@ -24,8 +25,10 @@ as usual.
 Invoke the script as follows
 
     python indexer.py PDF="PATH\TO\PDF\FILE\INCLUDING\EXTENTSION.pdf" IDX="PATH\TO\OUTPUT\FILE\INCLUDING\EXTENSION.txt"
+</details>
 
 ## Page Groups
+<details> <summary>Click to expand...</summary>
 
 If the PDF file is too large for the resulting index to be useful, you can split it into several sub-indices using page groups. A page group is any set of pages you are interested in. For example, suppose you are indexing a large file representing a collection of lectures and you're only interested in lecture 1, the first 10 pages. 
 
@@ -36,14 +39,19 @@ You can invoke the script like this
 This invocation will, in addition to creating the overall index specified by IDX, also create a sub-index of only the the first 10 pages, in a file named Lecture1.txt. And thus you have only the words of Lecture 1 indexed. You can add any number of page groups this way.
 
 The page group name minus the leading '#' and the trailing '=' is the path to its output file. If no extension is specified the DEFAULT_EXTENSION from config.py will be used. Notice the string quotations around the whole page group.
+</details>
 
 ## Set Page Groups
+<details> <summary>Click to expand...</summary>
 
 Page groups specified with 'number..number' are called "Ranged Page Group", because the 2 numbers form a range. You might want to specify a group of pages that are not contigues, in which case you can use a "Set Page Group", like this 
 
     python indexer.py [...] "@Important Pages=1,5,10,80,90,22,42"
-    
+</details>
+ 
 ## Customizing The Output Format
+<details> <summary>Click to expand...</summary>
+
 The way format customization works is that the script calls callback functions in config.py before or after key events in the printing process, and the return objects are printed to the output file.
 
 For example, suppose we want to print in the json format. First we need to invoke the script like this
@@ -87,9 +95,12 @@ This is what the output files might look like
     }
     
 Therefore, those 6 callback functions in config.py allow the user to customize the output format in an extremely general way.
+</details>
 
 ## Efficiency
+<details> <summary>Click to expand...</summary>
 
 The script is somewhat a sloth. It takes about a minute to index a pdf file of about 500 pages on an intel core i7 4th gen dual 2.9 GHz core machine with 8GB RAM and an HDD, running a Windows 8.1 instance. 
 
 I think there is no realistic way to improve it as most of the time appears to be spent in the pdfplumber code. But I will try.  
+</details>
