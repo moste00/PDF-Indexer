@@ -66,7 +66,7 @@ else:
         
         num_words_skipped = 0
         for i,word in enumerate(sorted(index)):
-            page_set = set(index[word])
+            page_set = sorted(set(index[word]))
             total_num_pages = len(page_set)
             total_num_occurrences = len(index[word])
             if not include_word_in_index(word, total_num_occurrences, total_num_pages, index[word]):
