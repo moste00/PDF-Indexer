@@ -50,7 +50,7 @@ else:
     index = {}
     
     with pdfplumber.open(args.pdf_file_path) as pdf_file:
-        print("Pages Progress:")
+        print("Pages Progress out of(", len(pdf_file.pages), "):")
         for idx,page in tqdm(enumerate(pdf_file.pages)):
             text = page.extract_text()
             words = get_relevant_words(text)
@@ -74,7 +74,7 @@ else:
         
         index_file.write(before_writing_begins(len(index)))
         num_words_skipped = 0
-        print("Words Progress:")
+        print("Words Progress out of(", len(index), "):")
         for i,word in tqdm(enumerate(sorted(index))):
             total_num_pages = len(index[word])
             if not include_word_in_index(word, total_num_pages, index[word]):
@@ -103,7 +103,7 @@ else:
                                                              }
         index_file.write(after_writing_ends())                
             
-    print("groups Progress:")
+    print("Groups Progress out of(", len(groups_sub_indices), "):")
     for group_name in tqdm(groups_sub_indices):
         with open(group_name,"w") as group_file:
             group_file.write(before_writing_begins(len(groups_sub_indices[group_name])))
