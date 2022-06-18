@@ -8,7 +8,8 @@ Created on Fri Jun 17 16:42:23 2022
 
 #If page group names don't contain extensions, this will be the used extension for the file of the page group
 DEFAULT_EXTENSION = ".txt"
-
+#If this is true, ranged group pages will always start from 1
+PAGE_GROUPS_RELATIVE_NUMBERING = True
 
 #Those callbacks will be called at specific events during the index printing process
 #This allows you to control the format of the resulting file at a really fine-grained level

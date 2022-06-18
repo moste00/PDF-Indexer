@@ -67,6 +67,7 @@ class CmdArgsParser:
                                             RANGE         #Then the range, a pair of numbers seperated by a '..'
                                         ]),
                                    cmd_string)
+        self.groups_start_page = {}
         for match in ranged_groups:
             group = match.group()
             group_fields = group.split("=")
@@ -83,7 +84,7 @@ class CmdArgsParser:
                 group_name = group_name + DEFAULT_EXTENSION
                     
             self.groups.append(RangePageGroup(group_name, min_num, max_num))
-        
+            self.groups_start_page[group_name] = min_num 
         #Try parsing set page groups
         set_groups = re.finditer(''.join([
                                         "@"    , #A literal '@', the set group start marker

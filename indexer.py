@@ -14,9 +14,10 @@ from tqdm import tqdm
 
 from ignored_words import IRRELEVANT_WORDS 
 
-from config import DEFAULT_EXTENSION
+from config import PAGE_GROUPS_RELATIVE_NUMBERING
 from config import before_writing_begins
-from config import before_writing_word,after_writing_word,before_writing_pagenum,after_writing_pagenum
+from config import before_writing_word,after_writing_word
+from config import before_writing_pagenum,after_writing_pagenum
 from config import after_writing_ends
 from config import include_word_in_index
 from cmd_args_parser import CmdArgsParser
@@ -50,7 +51,7 @@ else:
     index = {}
     
     with pdfplumber.open(args.pdf_file_path) as pdf_file:
-        print("Pages Progress out of(", len(pdf_file.pages), "):")
+        print("Indexing ", len(pdf_file.pages), " PDF Pages...")
         for idx,page in tqdm(enumerate(pdf_file.pages)):
             text = page.extract_text()
             words = get_relevant_words(text)
@@ -74,7 +75,8 @@ else:
         
         index_file.write(before_writing_begins(len(index)))
         num_words_skipped = 0
-        print("Words Progress out of(", len(index), "):")
+        print("Processing ", len(index), " Words In Master Index...")
+
         for i,word in tqdm(enumerate(sorted(index))):
             total_num_pages = len(index[word])
             if not include_word_in_index(word, total_num_pages, index[word]):
@@ -103,8 +105,13 @@ else:
                                                              }
         index_file.write(after_writing_ends())                
             
-    print("Groups Progress out of(", len(groups_sub_indices), "):")
+    print("Writing ", len(groups_sub_indices), " Page Groups...")
     for group_name in tqdm(groups_sub_indices):
+        group_offset = 0 
+        if PAGE_GROUPS_RELATIVE_NUMBERING \
+        and group_name in args.groups_start_page:
+            group_offset = args.groups_start_page[group_name] - 1
+
         with open(group_name,"w") as group_file:
             group_file.write(before_writing_begins(len(groups_sub_indices[group_name])))
             
@@ -116,7 +123,7 @@ else:
                 total_num_pages = len(groups_sub_indices[group_name][word])
                 for j,page_num in enumerate(groups_sub_indices[group_name][word]):
                     group_file.write(before_writing_pagenum(j, total_num_pages))
-                    group_file.write(str(page_num))
+                    group_file.write(str(page_num - group_offset))
                     group_file.write(after_writing_pagenum(j+1, total_num_pages))
                     
             group_file.write(after_writing_ends())
