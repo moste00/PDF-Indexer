@@ -40,6 +40,6 @@ def after_writing_ends():
 
 #This is a user defined filter where you can put custom code to prevent words from appearing in the index
 #Any word that doesn't pass this filter (returns false) won't appear in the index nor any of the sub-indices
-def include_word_in_index(word,num_pages,pages):
-    if num_pages == 1: return False 
+def include_word_in_index(word,num_occurrences,num_pages,pages):
+    if num_occurrences == 1: return False 
     return True
