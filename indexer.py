@@ -5,6 +5,7 @@ Created on Wed Jun 15 14:35:41 2022
 @author: Mostafa
 """
 
+from collections import defaultdict
 import pdfplumber
 import re
 import sys
@@ -21,11 +22,11 @@ from cmd_args_parser import CmdArgsParser
 def get_relevant_words(string):
     all_words = re.findall(r"[a-zA-Z]{3,}",string)
     
-    relevant_words = set({})
+    relevant_words = []
     for word in all_words:
         word_lowercase = word.lower() 
         if not word_lowercase in IRRELEVANT_WORDS:
-            relevant_words.add(word_lowercase)
+            relevant_words.append(word_lowercase)
         
     return relevant_words
 
@@ -44,7 +45,7 @@ if args.parsing_errors:
         print("################################# Parse Error! ################################# \n"+error)
 else:
     #This is a Dictionary<String, Set<Integer>> that will map each relevant word to the set of pages where it appears         
-    index = {}
+    index = defaultdict(list)
     
     with pdfplumber.open(args.pdf_file_path) as pdf_file:
         for idx,page in enumerate(pdf_file.pages):
@@ -52,14 +53,7 @@ else:
             words = get_relevant_words(text)
             
             for word in words:
-                #If word was encountered before
-                if word in index:
-                    #Add current page number to the set of page numbers where the word appears
-                    index[word].add(idx+1)
-                #If this is a new word
-                else:
-                    #add it to the index with the current page number as the only page (yet) where it appears  
-                    index[word] = {idx+1}
+                index[word].append(idx+1)
     
     #This is a Dictionary<String, 
     #                     Dictionary<String,Set<Integer>>>
@@ -72,8 +66,10 @@ else:
         
         num_words_skipped = 0
         for i,word in enumerate(sorted(index)):
-            total_num_pages = len(index[word])
-            if not include_word_in_index(word, total_num_pages, index[word]):
+            page_set = set(index[word])
+            total_num_pages = len(page_set)
+            total_num_occurrences = len(index[word])
+            if not include_word_in_index(word, total_num_occurrences, total_num_pages, index[word]):
                 num_words_skipped += 1
                 continue 
             
@@ -81,7 +77,7 @@ else:
             index_file.write(word)
             index_file.write(after_writing_word(i+1 - num_words_skipped))
             
-            for j,page_num in enumerate(index[word]):
+            for j,page_num in enumerate(page_set):
                 index_file.write(before_writing_pagenum(j, total_num_pages))
                 index_file.write(str(page_num))
                 index_file.write(after_writing_pagenum(j+1, total_num_pages))
