@@ -15,9 +15,9 @@ The numbers that follow each word are all the page numbers where the word appear
 
 ## How To Use
 
-Use any python installation with the library [pdfplumber](https://github.com/jsvine/pdfplumber) installed. You can do it with 
+Install Dependencies
 
-    pip install pdfplumber
+    pip3 install -r requirements.txt
     
 as usual.
 
